@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head/>
+<h:body>
+    <h2>Students taking a course - #{studentsJPAModel.course.name}:</h2>
+    <ol>
+        <ui:repeat value="#{studentsJPAModel.course.students}" var="student">
+            <li>
+                <h:link value="#{student.name} #{student.phoneNumber}" outcome="studentDetails?studentId=#{student.id}" />
+            </li>
+        </ui:repeat>
+    </ol>
+    <h:form>
+        <h:inputText a:placeholder="name" value="#{studentsJPAModel.studentToCreate.name}" required="true" />
+        <h:commandButton value="Add student to the course"
+                         actionListener="#{studentsJPAModel.createStudent}"
+                         action="#{'students?faces-redirect=true&amp;courseId='.concat(studentsJPAModel.course.id)}">
+                <f:param name="courseId" value="#{studentsJPAModel.course.id}" />
+        </h:commandButton>
+    </h:form>
+    <h:link outcome="index" value="Back to courses page"/>
+</h:body>
+</html>

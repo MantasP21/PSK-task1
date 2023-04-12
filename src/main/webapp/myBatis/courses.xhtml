@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+>
+<h:head/>
+<h:body>
+    <h2>Courses:</h2>
+    <ol>
+        <ui:repeat value="#{coursesMyBatisModel.allCourses}" var="course">
+            <li><h:link value="#{course.name}" outcome="students?courseId=#{course.id}" /></li>
+        </ui:repeat>
+    </ol>
+    <h:form>
+        <h:inputText value="#{coursesMyBatisModel.courseToCreate.name}" required="true" />
+        <h:commandButton value="Add new course" action="#{coursesMyBatisModel.createCourse}" />
+    </h:form>
+    <h:link value="Back to index" outcome="/index"/>
+</h:body>
+</html>

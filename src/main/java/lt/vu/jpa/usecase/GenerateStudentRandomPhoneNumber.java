@@ -23,10 +23,11 @@ public class GenerateStudentRandomPhoneNumber implements Serializable {
     public String generateNewPhoneNumber() {
         Map<String, String> requestParameters =
                 FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String courseId = requestParameters.get("courseId");
         String studentId = requestParameters.get("studentId");
 
         phoneNumberGenerationTask = CompletableFuture.supplyAsync(() -> phoneNumberService.generatePhoneNumber());
-        return  "/studentDetails.xhtml?faces-redirect=true&studentId=" + studentId;
+        return  "/studentDetails.xhtml?faces-redirect=true&courseId=" + courseId + "&studentId=" + studentId;
     }
     public String getPhoneNumberGenerationStatus() throws ExecutionException, InterruptedException {
         if (phoneNumberGenerationTask == null) {

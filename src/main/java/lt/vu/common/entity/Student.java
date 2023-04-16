@@ -8,13 +8,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @NamedQuery(name = "Student.findAll", query = "select a from Student as a")
@@ -31,13 +32,12 @@ public class Student implements Serializable {
 
     private String phoneNumber;
 
-    @ManyToOne
-    @JoinColumn(name="COURSE_ID")
-    private Course course;
-
     @Version
     @Column(name = "OPT_LOCK_VERSION")
     private Integer version;
+
+    @ManyToMany(mappedBy = "students")
+    private Set<Course> courses = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {

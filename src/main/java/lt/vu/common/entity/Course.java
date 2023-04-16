@@ -7,11 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @NamedQuery(name = "Course.findAll", query = "select t from Course as t")
@@ -24,8 +27,15 @@ public class Course {
 
     private String name;
 
-    @OneToMany(mappedBy = "course")
-    private List<Student> students = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "university_id")
+    private University university;
+
+    @ManyToMany
+    @JoinTable(name = "Course_students",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "students_id"))
+    private Set<Student> students = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {

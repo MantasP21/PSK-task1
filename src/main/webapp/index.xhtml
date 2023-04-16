@@ -3,19 +3,52 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
 >
 <h:head/>
 <h:body>
+    <h2>Universities:</h2>
+    <ol>
+        <ui:repeat value="#{universitiesJPAModel.allUniversities}" var="university">
+            <li>
+                <h:outputText value="#{university.name}" />
+                <h:panelGroup rendered="#{not empty university.courses}">
+                    <h4>Available courses</h4>
+                    <ol>
+                        <ui:repeat value="#{university.courses}" var="course">
+                            <li><h:outputText value="#{course.name}" /></li>
+                        </ui:repeat>
+                    </ol>
+                </h:panelGroup>
+            </li>
+        </ui:repeat>
+    </ol>
+    <h:form>
+        <h:inputText value="#{universitiesJPAModel.universityToCreate.name}" required="true" />
+        <h:commandButton value="Add new university" actionListener="#{universitiesJPAModel.createUniversity}" action="index?faces-redirect=true"/>
+    </h:form>
     <h2>Courses:</h2>
     <ol>
         <ui:repeat value="#{coursesJPAModel.allCourses}" var="course">
             <li><h:link value="#{course.name}" outcome="students?courseId=#{course.id}" /></li>
         </ui:repeat>
     </ol>
-    <h:form>
-        <h:inputText value="#{coursesJPAModel.courseToCreate.name}" required="true" />
-        <h:commandButton value="Add new course" actionListener="#{coursesJPAModel.createCourse}" action="index?faces-redirect=true"/>
-    </h:form>
+    <h:panelGroup rendered="#{not empty universitiesJPAModel.allUniversities}">
+        <h:form>
+            <h:outputLabel value="Course Name:" for="courseName" />
+            <h:inputText id="courseName" value="#{coursesJPAModel.courseToCreate.name}" required="true" />
+            <br/>
+
+            <h:outputLabel value="University:" for="universitySelect" />
+            <h:selectOneMenu id="universitySelect" value="#{coursesJPAModel.courseToCreate.universityId}" required="true">
+                <f:selectItems value="#{universitiesJPAModel.allUniversities}" var="university" itemValue="#{university.id}" itemLabel="#{university.name}" />
+            </h:selectOneMenu>
+            <br/>
+
+            <h:commandButton value="Add new course" actionListener="#{coursesJPAModel.createCourse}" action="index?faces-redirect=true" />
+        </h:form>
+    </h:panelGroup>
+    <br/>
     <h:link outcome="myBatis/courses" value="MyBatis implementation"/>
 </h:body>
 </html>

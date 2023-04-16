@@ -7,16 +7,34 @@
       xmlns:f="http://java.sun.com/jsf/core">
 <h:head/>
 <h:body>
-    <h2>Students in #{studentsJPAModel.course.name} course:</h2>
+    <h2>Students taking a course - #{studentJPAModel.course.name}:</h2>
     <ol>
-        <ui:repeat value="#{studentsJPAModel.course.students}" var="student">
-            <li>#{student.name}</li>
+        <ui:repeat value="#{studentJPAModel.course.students}" var="student">
+            <li>
+                <h:outputText value="#{student.name}" />
+            </li>
         </ui:repeat>
     </ol>
+    <h:panelGroup rendered="#{not empty studentJPAModel.availableStudents}">
+        <h:form id="existing-student-form">
+            <h:selectOneMenu id="select">
+                <f:selectItems value="#{studentJPAModel.availableStudents}" var="student" itemValue="#{student.id}" itemLabel="#{student.name}" />
+            </h:selectOneMenu>
+            <br/>
+            <h:commandButton value="Add existing student to the course"
+                             actionListener="#{studentJPAModel.registerStudent}"
+                             action="#{'students?faces-redirect=true&amp;courseId='.concat(studentJPAModel.course.id)}">
+                <f:param name="courseId" value="#{studentJPAModel.course.id}" />
+            </h:commandButton>
+        </h:form>
+    </h:panelGroup>
+    <br/>
     <h:form>
-        <h:inputText a:placeholder="name" value="#{studentsJPAModel.studentToCreate.name}" required="true" />
-        <h:commandButton value="Add student to the course" action="#{studentsJPAModel.createStudent}" >
-            <f:param name="courseId" value="#{studentsJPAModel.course.id}" />
+        <h:inputText a:placeholder="name" value="#{studentJPAModel.studentToCreate.name}" required="true" />
+        <h:commandButton value="Add a new student to the course"
+                         actionListener="#{studentJPAModel.registerStudent}"
+                         action="#{'students?faces-redirect=true&amp;courseId='.concat(studentJPAModel.course.id)}">
+            <f:param name="courseId" value="#{studentJPAModel.course.id}" />
         </h:commandButton>
     </h:form>
     <h:link outcome="/myBatis/courses" value="Back to courses page"/>

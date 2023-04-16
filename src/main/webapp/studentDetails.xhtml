@@ -13,6 +13,7 @@
         <h:inputText a:placeholder="enter the value" value="#{updateStudentDetails.student.phoneNumber}" required="true" />
         <h:commandButton value="update" action="#{updateStudentDetails.updateStudentPhoneNumber()}">
             <f:param name="studentId" value="#{updateStudentDetails.student.id}" />
+            <f:param name="courseId" value="#{updateStudentDetails.currentCourseId}" />
         </h:commandButton>
         <h:outputText value="Value was already modified by other user. If you want to override it - try again" rendered="#{param['error'] == 'optimistic-lock-exception'}" />
     </h:form>
@@ -20,6 +21,7 @@
         <h:outputText value="#{generateStudentRandomPhoneNumber.phoneNumberGenerationStatus}" />
         <h:commandButton value="Generate phone number?" disabled="#{generateStudentRandomPhoneNumber.phoneNumberGenerating}" action="#{generateStudentRandomPhoneNumber.generateNewPhoneNumber()}">
             <f:param name="studentId" value="#{updateStudentDetails.student.id}" />
+            <f:param name="courseId" value="#{updateStudentDetails.currentCourseId}" />
         </h:commandButton>
     </h:form>
     <h:link outcome="index" value="Back to home page"/>

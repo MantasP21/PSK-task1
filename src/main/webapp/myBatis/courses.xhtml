@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
 >
 <h:head/>
 <h:body>
@@ -13,7 +14,14 @@
         </ui:repeat>
     </ol>
     <h:form>
-        <h:inputText value="#{coursesMyBatisModel.courseToCreate.name}" required="true" />
+        <h:outputLabel value="Course Name:" for="courseName" />
+        <h:inputText id="courseName" value="#{coursesMyBatisModel.courseToCreate.name}" required="true" />
+        <br/>
+        <h:outputLabel value="University:" for="universitySelect" />
+        <h:selectOneMenu id="universitySelect" value="#{coursesJPAModel.courseToCreate.universityId}" required="true">
+            <f:selectItems value="#{universitiesJPAModel.allUniversities}" var="university" itemValue="#{university.id}" itemLabel="#{university.name}" />
+        </h:selectOneMenu>
+        <br/>
         <h:commandButton value="Add new course" action="#{coursesMyBatisModel.createCourse}" />
     </h:form>
     <h:link value="Back to index" outcome="/index"/>

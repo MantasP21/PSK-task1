@@ -3,9 +3,9 @@ package lt.vu.jpa.usecase;
 
 import lombok.Getter;
 import lombok.Setter;
+import lt.vu.common.entity.Student;
 import lt.vu.common.interceptor.LoggedInvocation;
 import lt.vu.jpa.persistance.StudentsDAO;
-import lt.vu.common.entity.Student;
 
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
@@ -25,12 +25,17 @@ public class UpdateStudentDetails implements Serializable {
     private StudentsDAO studentsDAO;
 
     private Student student;
+    private Integer currentCourseId;
 
 
     @PostConstruct
     private void init() {
         Map<String, String> requestParameters =
                 FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String courseId = requestParameters.get("courseId");
+        if (courseId != null) {
+            currentCourseId = Integer.parseInt(courseId);
+        }
         Integer studentId = Integer.parseInt(requestParameters.get("studentId"));
         this.student = studentsDAO.findOne(studentId);
     }
@@ -41,8 +46,8 @@ public class UpdateStudentDetails implements Serializable {
         try{
             studentsDAO.update(this.student);
         } catch (OptimisticLockException e) {
-            return "/studentDetails.xhtml?faces-redirect=true&studentId=" + this.student.getId() + "&error=optimistic-lock-exception";
+            return "/studentDetails.xhtml?faces-redirect=true&courseid=" + currentCourseId + "&studentId=" + student.getId() + "error=optimistic-lock-exception";
         }
-        return "students.xhtml?courseId=" + this.student.getCourse().getId() + "&faces-redirect=true";
+        return "students.xhtml?courseId=" + currentCourseId + "&faces-redirect=true";
     }
 }

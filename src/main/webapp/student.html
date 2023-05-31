@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Details</title>
+</head>
+<body>
+<h2>Student Details</h2>
+<div id="studentDetails"></div>
+
+<h2>Update Favourite Number</h2>
+<form id="favouriteNumberForm">
+    <input type="text" id="favouriteNumber" name="favouriteNumber" placeholder="New favourite number">
+    <input type="submit" value="Update">
+</form>
+<br>
+<button id="suggestNumberButton">Suggest favourite number</button>
+<div id="favouriteNumberResult"></div>
+
+<script>
+    const BASE_URL = 'http://localhost:8080/task2/api';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentId = urlParams.get('id');
+
+    let studentVersion;
+    let studentName;
+    let isNumberGenerating;
+
+    function refreshStudent() {
+        fetch(`${BASE_URL}/students/${studentId}`)
+            .then(response => response.json())
+            .then(data => {
+                const detailsDiv = document.getElementById('studentDetails');
+                studentVersion = data.version;
+                studentName = data.name;
+                detailsDiv.innerHTML = `
+                        <p>Name: ${data.name}</p>
+                        <p>Favourite number: ${data.favouriteNumber}</p>
+                    `;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function checkFavouriteNumber() {
+        if (!isNumberGenerating)
+            return false;
+        fetch(`${BASE_URL}/favouriteNumber`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.text())
+        .then(data => {
+            const resultDiv = document.getElementById('favouriteNumberResult');
+            if (data === '') {
+                resultDiv.textContent = 'Number generation is in progress';
+            } else {
+                resultDiv.textContent = 'Suggested favourite number: ' + data;
+                isNumberGenerating = false;
+            }
+        }).catch(error => console.error('Error:', error));
+    }
+
+
+    document.getElementById('favouriteNumberForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const favouriteNumber = document.getElementById('favouriteNumber').value;
+        fetch(`${BASE_URL}/students/${studentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: studentId,
+                version: studentVersion,
+                name: studentName,
+                favouriteNumber: favouriteNumber
+            }),
+        })
+        .then(response => {
+            if (response.status === 409) {
+                const forceUpdate = confirm("Stale object was tried to update. Force update?");
+                if (forceUpdate) {
+                    return fetch(`${BASE_URL}/students/${studentId}?force=true`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: studentId,
+                            version: studentVersion,
+                            name: studentName,
+                            favouriteNumber: favouriteNumber
+                        }),
+                    });
+                }
+            } else {
+                return response.json();
+            }
+        })
+        .then(data => console.log('Success:', data))
+        .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('suggestNumberButton').addEventListener('click', function() {
+        fetch(`${BASE_URL}/favouriteNumber`, {
+            method: 'POST'
+        })
+        .then(response => {
+            isNumberGenerating = true;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+
+
+    refreshStudent();
+    setInterval(checkFavouriteNumber, 1000);
+
+</script>
+</body>
+</html>

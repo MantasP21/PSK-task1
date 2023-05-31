@@ -30,7 +30,7 @@ public class Student implements Serializable {
     @Column(name = "NAME")
     private String name;
 
-    private String phoneNumber;
+    private Integer favouriteNumber;
 
     @Version
     @Column(name = "OPT_LOCK_VERSION")

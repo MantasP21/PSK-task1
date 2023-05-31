@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Get Student Data</title>
+</head>
+<body>
+<h2>Students</h2>
+<ul id="studentNames"></ul>
+<h2>Add a new student</h2>
+<form id="createStudentForm">
+    <input type="text" id="studentName" name="studentName" placeholder="Student name">
+    </br>
+    <input type="text" id="favouriteNumber" name="favouriteNumber" placeholder="Favourite number">
+    </br>
+    <input type="submit" value="Create">
+</form>
+
+<script>
+    const BASE_URL = 'http://localhost:8080/task2/api';
+
+    function refreshStudents() {
+        fetch(`${BASE_URL}/students`)
+            .then(response => response.json())
+            .then(data => {
+                const namesList = document.getElementById('studentNames');
+                namesList.innerHTML = '';
+                data.forEach(student => {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.textContent = student.name;
+                    link.href = `student.html?id=` + student.id;
+                    listItem.appendChild(link);
+                    namesList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    document.getElementById('createStudentForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const studentName = document.getElementById('studentName').value;
+        const favouriteNumber = document.getElementById('favouriteNumber').value;
+        fetch(`${BASE_URL}/students/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: studentName,
+                favouriteNumber: favouriteNumber
+            }),
+        }).then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    });
+
+    refreshStudents();
+    // setInterval(refreshStudents, 1000);
+
+</script>
+</body>
+</html>
